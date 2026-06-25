@@ -1,3 +1,5 @@
+using TrackerObjetos.Services;
+
 namespace TrackerObjetos.Views;
 
 public partial class LoginView : ContentPage
@@ -23,9 +25,10 @@ public partial class LoginView : ContentPage
             return;
         }
 
-        await Task.Delay(500);
+        var db = App.Current?.Handler?.MauiContext?.Services.GetService<DatabaseService>();
+        if (db == null) return;
 
-        if (usuario == "admin" && password == "1234")
+        if (await db.LoginAsync(usuario, password))
         {
             if (Application.Current?.Windows.Count > 0)
             {
@@ -37,6 +40,19 @@ public partial class LoginView : ContentPage
             LblError.Text = "Usuario o contraseña incorrectos";
             LblError.IsVisible = true;
             BtnLogin.IsEnabled = true;
+        }
+    }
+
+    private async void OnRegisterClicked(object? sender, EventArgs e)
+    {
+        await Navigation.PushModalAsync(new RegisterView());
+    }
+
+    private async void OnSkipClicked(object? sender, EventArgs e)
+    {
+        if (Application.Current?.Windows.Count > 0)
+        {
+            Application.Current.Windows[0].Page = new AppShell();
         }
     }
 }

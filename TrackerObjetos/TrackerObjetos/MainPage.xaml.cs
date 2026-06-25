@@ -1,4 +1,6 @@
-﻿using Camera.MAUI;
+﻿using Android.Graphics;
+using Camera.MAUI;
+using TrackerObjetos.Models;
 using TrackerObjetos.Services;
 
 namespace TrackerObjetos;
@@ -7,6 +9,7 @@ public partial class MainPage : ContentPage
 {
     private AnthropicService? _anthropicService;
     private WebSearchService? _webSearchService;
+    private DatabaseService? _databaseService;
     private bool _cameraStarted;
     private bool _isCapturing;
 
@@ -35,6 +38,7 @@ public partial class MainPage : ContentPage
 
         _anthropicService ??= new AnthropicService();
         _webSearchService ??= new WebSearchService();
+        _databaseService ??= App.Current?.Handler?.MauiContext?.Services.GetService<DatabaseService>();
 
         if (SnapshotImage.IsVisible)
         {
@@ -123,7 +127,6 @@ public partial class MainPage : ContentPage
     {
         if (_isCapturing || _anthropicService == null) return;
         _isCapturing = true;
-
         SetLoadingState(true);
 
         try
@@ -181,6 +184,21 @@ public partial class MainPage : ContentPage
 
             SetLoadingState(false);
 
+            if (_databaseService is { IsLoggedIn: true })
+            {
+                var thumb = ComprimirImagen(bytes, 600, 70);
+                await _databaseService.SaveDetectionAsync(new DetectionHistory
+                {
+                    UserId = _databaseService.CurrentUserId,
+                    Titulo = titulo,
+                    Descripcion = descripcionCompleta,
+                    Thumbnail = thumb,
+                    WebTitle = webResult?.Title,
+                    WebExtract = webResult?.Extract,
+                    DetectedAt = DateTime.Now
+                });
+            }
+
             var page = new Views.DetalleView(titulo, descripcionCompleta, bytes, webResult);
             await Navigation.PushModalAsync(page);
 
@@ -221,6 +239,114 @@ public partial class MainPage : ContentPage
         LblInstruccion.Text = loading ? "Analizando imagen con IA..." : "Apunte la cámara al objeto y presione Identificar";
     }
 
+    private async void OnGaleriaClicked(object? sender, EventArgs e)
+    {
+        if (_isCapturing || _anthropicService == null) return;
+
+        try
+        {
+            var imgs = await MediaPicker.PickPhotosAsync(new MediaPickerOptions
+            {
+                Title = "Selecciona una imagen"
+            });
+
+            var img = imgs?.FirstOrDefault();
+            if (img == null) return;
+
+            _isCapturing = true;
+            SetLoadingState(true);
+
+            var stream = await img.OpenReadAsync();
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var bytes = ms.ToArray();
+
+            if (bytes.Length < 10000)
+            {
+                await DisplayAlertAsync("Error", "Imagen muy pequeña", "OK");
+                RestoreCamera();
+                return;
+            }
+
+            SnapshotImage.Source = ImageSource.FromStream(() => new MemoryStream(bytes));
+            SnapshotImage.IsVisible = true;
+
+            var descripcion = await _anthropicService.IdentifyObjectAsync(bytes);
+
+            string titulo = "Objeto";
+            string descripcionCompleta = descripcion;
+            var pipeIndex = descripcion.IndexOf('|');
+            if (pipeIndex > 0)
+            {
+                titulo = descripcion.Substring(0, pipeIndex).Trim()
+                    .Trim('\'', '"', '*', '-', ' ', '\n', '\r');
+                descripcionCompleta = descripcion.Substring(pipeIndex + 1).Trim()
+                    .Trim('\'', '"', '*', '-', ' ', '\n', '\r');
+            }
+
+            var webResult = await _webSearchService!.SearchObjectAsync(titulo);
+
+            if (_databaseService is { IsLoggedIn: true })
+            {
+                var thumb = ComprimirImagen(bytes, 600, 70);
+                await _databaseService.SaveDetectionAsync(new DetectionHistory
+                {
+                    UserId = _databaseService.CurrentUserId,
+                    Titulo = titulo,
+                    Descripcion = descripcionCompleta,
+                    Thumbnail = thumb,
+                    WebTitle = webResult?.Title,
+                    WebExtract = webResult?.Extract,
+                    DetectedAt = DateTime.Now
+                });
+            }
+
+            SetLoadingState(false);
+
+            var page = new Views.DetalleView(titulo, descripcionCompleta, bytes, webResult);
+            await Navigation.PushModalAsync(page);
+        }
+        catch (Exception ex)
+        {
+            RestoreCamera();
+            await DisplayAlertAsync("Error", $"Ocurrió un error: {ex.Message}", "OK");
+        }
+    }
+
+    private static byte[] ComprimirImagen(byte[] imagen, int maxAncho, int calidad)
+    {
+        try
+        {
+            var bitmap = Android.Graphics.BitmapFactory.DecodeByteArray(imagen, 0, imagen.Length);
+            if (bitmap == null) return imagen;
+
+            var ancho = bitmap.Width;
+            if (ancho <= maxAncho)
+            {
+                using var ms = new MemoryStream();
+                bitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg, calidad, ms);
+                bitmap.Recycle();
+                return ms.ToArray();
+            }
+
+            var ratio = (double)maxAncho / ancho;
+            var nuevoAncho = (int)(ancho * ratio);
+            var nuevoAlto = (int)(bitmap.Height * ratio);
+
+            var resized = Android.Graphics.Bitmap.CreateScaledBitmap(bitmap, nuevoAncho, nuevoAlto, true);
+            bitmap.Recycle();
+
+            using var msOut = new MemoryStream();
+            resized.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg, calidad, msOut);
+            resized.Recycle();
+            return msOut.ToArray();
+        }
+        catch
+        {
+            return imagen;
+        }
+    }
+
     private void OnLogoutClicked(object? sender, EventArgs e)
     {
         if (CamaraPreview != null)
@@ -230,6 +356,7 @@ public partial class MainPage : ContentPage
         }
         if (Application.Current?.Windows.Count > 0)
         {
+            if (_databaseService != null) _databaseService.Logout();
             Application.Current.Windows[0].Page = new Views.LoginView();
         }
     }

@@ -1,0 +1,19 @@
+# API keys & secrets
+**/appsettings.json
+*.env
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.DotSettings.user
+
+# Visual Studio
+.vs/
+*.csproj.user
+
+# Build
+*.apk
+*.aab
+*.keystore

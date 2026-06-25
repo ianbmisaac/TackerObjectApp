@@ -66,6 +66,16 @@
                             HeightRequest="48"
                             Margin="0,4,0,0" />
 
+                    <Button x:Name="BtnGaleria"
+                            Text="Seleccionar de galería"
+                            Clicked="OnGaleriaClicked"
+                            BackgroundColor="#2A2A5A"
+                            TextColor="#CCFFFFFF"
+                            FontSize="13"
+                            CornerRadius="12"
+                            HeightRequest="38"
+                            Margin="0,0,0,0" />
+
                 </VerticalStackLayout>
             </Border>
 

@@ -5,7 +5,7 @@ namespace TrackerObjetos.Services;
 
 public class AnthropicService
 {
-    private const string ApiKey = "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";
+    private const string ApiKey = "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";
     private const string Model = "claude-haiku-4-5-20251001";
     private static readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromSeconds(60) };
 
