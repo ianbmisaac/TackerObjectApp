@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\Vicente Morales\\OneDrive - Corporaci\u00F3n Santo Tomas\\Documentos\\2026 Semestre 1\\Repositorios\\TackerObjectApp\\TrackerObjetos\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{3BFC907C-1D3D-453E-024A-860FEDA7B1E3}|TrackerObjetos\\TrackerObjetos.csproj|c:\\users\\vicente morales\\onedrive - corporaci\u00F3n santo tomas\\documentos\\2026 semestre 1\\repositorios\\tackerobjectapp\\trackerobjetos\\trackerobjetos\\services\\anthropicservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3BFC907C-1D3D-453E-024A-860FEDA7B1E3}|TrackerObjetos\\TrackerObjetos.csproj|solutionrelative:trackerobjetos\\services\\anthropicservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{3BFC907C-1D3D-453E-024A-860FEDA7B1E3}|TrackerObjetos\\TrackerObjetos.csproj|c:\\users\\vicente morales\\onedrive - corporaci\u00F3n santo tomas\\documentos\\2026 semestre 1\\repositorios\\tackerobjectapp\\trackerobjetos\\trackerobjetos\\views\\aboutview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{3BFC907C-1D3D-453E-024A-860FEDA7B1E3}|TrackerObjetos\\TrackerObjetos.csproj|solutionrelative:trackerobjetos\\views\\aboutview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
@@ -14,8 +18,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AnthropicService.cs",
+              "DocumentMoniker": "C:\\Users\\Vicente Morales\\OneDrive - Corporaci\u00F3n Santo Tomas\\Documentos\\2026 Semestre 1\\Repositorios\\TackerObjectApp\\TrackerObjetos\\TrackerObjetos\\Services\\AnthropicService.cs",
+              "RelativeDocumentMoniker": "TrackerObjetos\\Services\\AnthropicService.cs",
+              "ToolTip": "C:\\Users\\Vicente Morales\\OneDrive - Corporaci\u00F3n Santo Tomas\\Documentos\\2026 Semestre 1\\Repositorios\\TackerObjectApp\\TrackerObjetos\\TrackerObjetos\\Services\\AnthropicService.cs",
+              "RelativeToolTip": "TrackerObjetos\\Services\\AnthropicService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAACRAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-25T04:57:44.404Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -26,7 +43,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "AboutView.xaml",
               "DocumentMoniker": "C:\\Users\\Vicente Morales\\OneDrive - Corporaci\u00F3n Santo Tomas\\Documentos\\2026 Semestre 1\\Repositorios\\TackerObjectApp\\TrackerObjetos\\TrackerObjetos\\Views\\AboutView.xaml",
               "RelativeDocumentMoniker": "TrackerObjetos\\Views\\AboutView.xaml",

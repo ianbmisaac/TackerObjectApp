@@ -27,7 +27,7 @@
 
                 <BoxView HeightRequest="1" Color="#33FFFFFF" Margin="0,5" />
 
-                <Label Text="Aplicaci&#xF3;n de detecci&#xF3;n de objetos en tiempo real usando ML Kit de Google."
+                <Label Text="Aplicaci&#xF3;n de identificaci&#xF3;n de objetos usando IA Claude Haiku 4.5 de Anthropic."
                        TextColor="White"
                        FontSize="14"
                        HorizontalOptions="Start" />
@@ -36,14 +36,14 @@
                        TextColor="#88FFFFFF"
                        FontSize="12" />
 
-                <Label Text="&#x2022; .NET 10 MAUI&#x0A;&#x2022; Camera.MAUI&#x0A;&#x2022; ML Kit Object Detection&#x0A;&#x2022; CommunityToolkit.Maui"
+                <Label Text="&#x2022; .NET 10 MAUI&#x0A;&#x2022; Camera.MAUI&#x0A;&#x2022; Claude Haiku 4.5 (Anthropic API)&#x0A;&#x2022; SQLite (sqlite-net-pcl)&#x0A;&#x2022; Wikipedia API"
                        TextColor="White"
                        FontSize="13"
                        LineHeight="1.6" />
 
                 <BoxView HeightRequest="1" Color="#33FFFFFF" Margin="0,5" />
 
-                <Label Text="Desarrollado con fines educativos."
+                <Label Text="Desarrollado con fines educativos por Vicente Morales y Ian Barria."
                        TextColor="#88FFFFFF"
                        FontSize="12"
                        HorizontalOptions="Center" />
