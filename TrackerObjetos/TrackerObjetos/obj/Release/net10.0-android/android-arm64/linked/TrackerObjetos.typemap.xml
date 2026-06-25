@@ -1,8 +1,0 @@
-<api type="release" assembly-name="TrackerObjetos" mvid="7f703b7175d84e6f8caa11cb37eb6d1e">
-  <module assembly-name="TrackerObjetos" mvid="7f703b7175d84e6f8caa11cb37eb6d1e" mvid-bytes="cTtwf9h1b06MqhHLN+ttHg==">
-    <types-scratch>
-      <entry key="crc64224a8c742a90dcfa/MainActivity" java-name="crc64224a8c742a90dcfa/MainActivity" managed-type-name="TrackerObjetos.MainActivity" token="33554462" />
-      <entry key="crc64224a8c742a90dcfa/MainApplication" java-name="crc64224a8c742a90dcfa/MainApplication" managed-type-name="TrackerObjetos.MainApplication" token="33554463" />
-    </types-scratch>
-  </module>
-</api>

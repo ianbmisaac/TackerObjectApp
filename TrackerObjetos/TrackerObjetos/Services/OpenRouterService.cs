@@ -5,8 +5,8 @@ namespace TrackerObjetos.Services;
 
 public class OpenRouterService
 {
-    private const string ApiKey = "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";
-    private const string Model = "google/gemma-4-26b-a4b-it:free";
+    private const string ApiKey = "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";
+    private const string Model = "nvidia/nemotron-3-ultra-550b-a55b:free";
     private static readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromSeconds(60) };
 
     public async Task<string> IdentifyObjectAsync(byte[] imageData)
@@ -35,52 +35,47 @@ public class OpenRouterService
 
         var json = JsonSerializer.Serialize(request);
 
-        int maxRetries = 5;
-        for (int attempt = 1; attempt <= maxRetries; attempt++)
-        {
-            using var content = new StringContent(json, Encoding.UTF8, "application/json");
-            using var httpRequest = new HttpRequestMessage(HttpMethod.Post, url);
-            httpRequest.Headers.Add("Authorization", $"Bearer {ApiKey}");
-            httpRequest.Headers.Add("HTTP-Referer", "https://github.com/TrackerObjetos");
-            httpRequest.Headers.Add("X-Title", "TrackerObjetos");
-            httpRequest.Content = content;
-
-            Console.WriteLine($"=== OR solicitando (intento {attempt}/{maxRetries})...");
-            var response = await _httpClient.SendAsync(httpRequest);
-            var responseJson = await response.Content.ReadAsStringAsync();
-
-            if (response.IsSuccessStatusCode)
+        int maxRetries = 2;
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
-                using var doc = JsonDocument.Parse(responseJson);
-                var text = doc.RootElement
-                    .GetProperty("choices")[0]
-                    .GetProperty("message")
-                    .GetProperty("content")
-                    .GetString();
+                using var content = new StringContent(json, Encoding.UTF8, "application/json");
+                using var httpRequest = new HttpRequestMessage(HttpMethod.Post, url);
+                httpRequest.Headers.Add("Authorization", $"Bearer {ApiKey}");
+                httpRequest.Headers.Add("HTTP-Referer", "https://github.com/TrackerObjetos");
+                httpRequest.Headers.Add("X-Title", "TrackerObjetos");
+                httpRequest.Content = content;
 
-                if (!string.IsNullOrWhiteSpace(text))
+                var response = await _httpClient.SendAsync(httpRequest);
+                var responseJson = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine($"OR ok ({text.Length} chars)");
-                    return text;
+                    using var doc = JsonDocument.Parse(responseJson);
+                    var text = doc.RootElement
+                        .GetProperty("choices")[0]
+                        .GetProperty("message")
+                        .GetProperty("content")
+                        .GetString();
+
+                    if (!string.IsNullOrWhiteSpace(text))
+                    {
+                        return text;
+                    }
+
+                    return "No se pudo identificar el objeto.";
                 }
 
-                return "No se pudo identificar el objeto.";
+                int statusCode = (int)response.StatusCode;
+
+                if (statusCode == 429 && attempt < maxRetries)
+                {
+                    int delay = (int)Math.Pow(2, attempt) * 500;
+                    await Task.Delay(delay);
+                    continue;
+                }
+
+                throw new HttpRequestException($"OpenRouter respondió {statusCode}");
             }
-
-            int statusCode = (int)response.StatusCode;
-            var preview = responseJson.Length > 200 ? responseJson[..200] : responseJson;
-            Console.WriteLine($"OR error {statusCode}: {preview}");
-
-            if (statusCode == 429 && attempt < maxRetries)
-            {
-                int delay = (int)Math.Pow(2, attempt) * 1000;
-                Console.WriteLine($"Rate limit, reintentando en {delay}ms...");
-                await Task.Delay(delay);
-                continue;
-            }
-
-            throw new HttpRequestException($"OpenRouter respondió {statusCode}");
-        }
 
         throw new HttpRequestException("Máximo de reintentos alcanzado");
     }

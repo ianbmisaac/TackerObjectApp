@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace TrackerObjetos
+﻿namespace TrackerObjetos
 {
     public partial class App : Application
     {

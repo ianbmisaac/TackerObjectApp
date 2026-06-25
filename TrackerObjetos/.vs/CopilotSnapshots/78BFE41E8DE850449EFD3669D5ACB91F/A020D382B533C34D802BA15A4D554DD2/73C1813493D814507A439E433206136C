@@ -1,6 +1,0 @@
-﻿namespace TrackerObjetos.Controls;
-
-public class CameraPreview : Microsoft.Maui.Controls.View
-{
-    // Cross-platform placeholder control for a native camera preview
-}

@@ -39,9 +39,8 @@ public class WebSearchService
                 Source = "Wikipedia"
             };
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine($"WebSearch error: {ex.GetType().Name}: {ex.Message}");
             return null;
         }
     }

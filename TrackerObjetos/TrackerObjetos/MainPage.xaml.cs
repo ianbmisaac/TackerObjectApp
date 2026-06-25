@@ -5,7 +5,7 @@ namespace TrackerObjetos;
 
 public partial class MainPage : ContentPage
 {
-    private OpenRouterService? _openRouterService;
+    private AnthropicService? _anthropicService;
     private WebSearchService? _webSearchService;
     private bool _cameraStarted;
     private bool _isCapturing;
@@ -14,7 +14,9 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         CamaraPreview.CamerasLoaded += OnCamerasLoaded;
+#if ANDROID
         CamaraPreview.HandlerChanged += OnCameraHandlerChanged;
+#endif
     }
 
     protected override async void OnAppearing()
@@ -31,7 +33,7 @@ public partial class MainPage : ContentPage
             return;
         }
 
-        _openRouterService ??= new OpenRouterService();
+        _anthropicService ??= new AnthropicService();
         _webSearchService ??= new WebSearchService();
 
         if (SnapshotImage.IsVisible)
@@ -58,7 +60,6 @@ public partial class MainPage : ContentPage
 
     private void OnCamerasLoaded(object? sender, EventArgs e)
     {
-        Console.WriteLine($"Cámaras cargadas: {CamaraPreview.Cameras.Count}");
         MainThread.BeginInvokeOnMainThread(TryStartCamera);
     }
 
@@ -70,7 +71,7 @@ public partial class MainPage : ContentPage
             var platformView = CamaraPreview.Handler?.PlatformView;
             if (platformView == null) return;
 
-            var previewView = FindPreviewView(platformView as Android.Views.ViewGroup);
+            var previewView = FindPreviewView((platformView as Android.Views.ViewGroup)!);
             if (previewView != null)
             {
                 var method = previewView.GetType().GetMethod("setScaleType",
@@ -78,23 +79,22 @@ public partial class MainPage : ContentPage
                 if (method != null)
                 {
                     method.Invoke(previewView, new object[] { 2 });
-                    Console.WriteLine("PreviewView ScaleType -> FIT_CENTER");
                 }
             }
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine($"Error set ScaleType: {ex.Message}");
+            // Scale type adjustment failed silently
         }
     }
 
-    private static Android.Views.View? FindPreviewView(Android.Views.ViewGroup? group)
+     private static Android.Views.View? FindPreviewView(Android.Views.ViewGroup? group)
     {
         if (group == null) return null;
         for (int i = 0; i < group.ChildCount; i++)
         {
             var child = group.GetChildAt(i);
-            if (child.GetType().Name == "PreviewView") return child;
+            if (child != null && child.GetType().Name == "PreviewView") return child;
             if (child is Android.Views.ViewGroup childGroup)
             {
                 var found = FindPreviewView(childGroup);
@@ -116,17 +116,12 @@ public partial class MainPage : ContentPage
 
             await CamaraPreview.StartCameraAsync(new Size(1920, 1080));
             _cameraStarted = true;
-            Console.WriteLine("Cámara iniciada");
-        }
-        else
-        {
-            Console.WriteLine("No hay cámaras disponibles aún");
         }
     }
 
     private async void OnIdentificarClicked(object? sender, EventArgs e)
     {
-        if (_isCapturing || _openRouterService == null) return;
+        if (_isCapturing || _anthropicService == null) return;
         _isCapturing = true;
 
         SetLoadingState(true);
@@ -166,11 +161,7 @@ public partial class MainPage : ContentPage
             SnapshotImage.IsVisible = true;
             CamaraPreview.IsVisible = false;
 
-            Console.WriteLine($"Capturando {bytes.Length} bytes para OpenRouter");
-
-            var descripcion = await _openRouterService.IdentifyObjectAsync(bytes);
-
-            Console.WriteLine($"OpenRouter respondió: {descripcion}");
+            var descripcion = await _anthropicService.IdentifyObjectAsync(bytes);
 
             // Parse "Nombre | TIPO: x | ..."
             string titulo = "Objeto";
@@ -186,16 +177,7 @@ public partial class MainPage : ContentPage
             }
 
             // Search Wikipedia for the identified object
-            Console.WriteLine($"=== Buscando en Wikipedia: {titulo}");
-            var webResult = await _webSearchService.SearchObjectAsync(titulo);
-            if (webResult != null)
-            {
-                Console.WriteLine($"Wikipedia: {webResult.Title} - {webResult.Extract[..Math.Min(webResult.Extract.Length, 200)]}");
-            }
-            else
-            {
-                Console.WriteLine("Wikipedia: sin resultados");
-            }
+            var webResult = await _webSearchService!.SearchObjectAsync(titulo);
 
             SetLoadingState(false);
 
@@ -207,7 +189,7 @@ public partial class MainPage : ContentPage
         catch (HttpRequestException ex)
         {
             RestoreCamera();
-            await DisplayAlertAsync("Error de conexión", $"No se pudo contactar a OpenRouter: {ex.Message}", "OK");
+            await DisplayAlertAsync("Error de conexión", $"No se pudo contactar a Claude: {ex.Message}", "OK");
         }
         catch (TaskCanceledException)
         {
@@ -217,7 +199,6 @@ public partial class MainPage : ContentPage
         catch (Exception ex)
         {
             RestoreCamera();
-            Console.WriteLine($"Error: {ex.GetType().Name}: {ex.Message}");
             await DisplayAlertAsync("Error", $"Ocurrió un error: {ex.Message}", "OK");
         }
     }
