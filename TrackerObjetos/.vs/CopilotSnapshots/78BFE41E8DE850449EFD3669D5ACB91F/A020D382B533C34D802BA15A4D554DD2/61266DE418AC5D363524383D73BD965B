@@ -1,0 +1,32 @@
+﻿using Android.Content;
+using Android.Views;
+using Android.Hardware.Camera2;
+using Android.Widget;
+using Microsoft.Maui.Handlers;
+using Microsoft.Maui.Platform;
+using TrackerObjetos.Controls;
+
+namespace TrackerObjetos;
+
+public class CameraPreviewHandler : ViewHandler<CameraPreview, FrameLayout>
+{
+    static readonly Microsoft.Maui.Handlers.PropertyMapper<CameraPreview> _mapper = new(Microsoft.Maui.Handlers.ViewHandler.ViewMapper);
+
+    public CameraPreviewHandler() : base(_mapper)
+    {
+    }
+
+    protected override FrameLayout CreatePlatformView()
+    {
+        var context = MauiApplication.Current.ApplicationContext;
+        var frame = new FrameLayout(context);
+
+        // Simple SurfaceView for preview
+        var surfaceView = new SurfaceView(context);
+        frame.AddView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+
+        // TODO: Implement Camera2 API preview using surfaceView.Holder
+
+        return frame;
+    }
+}

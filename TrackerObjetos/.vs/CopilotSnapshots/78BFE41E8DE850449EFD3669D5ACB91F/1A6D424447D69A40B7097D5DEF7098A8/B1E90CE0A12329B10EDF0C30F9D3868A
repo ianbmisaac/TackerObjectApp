@@ -1,0 +1,75 @@
+﻿using CommunityToolkit.Maui.Views;
+using Microsoft.Maui.ApplicationModel;
+
+namespace TrackerObjetos
+{
+    public partial class MainPage : ContentPage
+    {
+        private string _objetoDetectadoActual = string.Empty;
+
+        // 1. Instanciamos el dibujador del cuadro tracker
+        private TrackerDrawable _trackerDrawable = new TrackerDrawable();
+
+        public MainPage()
+        {
+            InitializeComponent();
+
+            // 2. Le asignamos nuestro dibujador al lienzo de la interfaz (XAML)
+            TrackerCanvas.Drawable = _trackerDrawable;
+
+            SimularDeteccionIA();
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+            if (status != PermissionStatus.Granted)
+            {
+                status = await Permissions.RequestAsync<Permissions.Camera>();
+            }
+
+            if (status != PermissionStatus.Granted)
+            {
+                await DisplayAlert("Permiso", "La aplicación necesita acceso a la cámara para funcionar.", "OK");
+            }
+        }
+
+        private async void SimularDeteccionIA()
+        {
+            // Esperamos 3 segundos simulando el inicio del escaneo
+            await Task.Delay(3000);
+
+            _objetoDetectadoActual = "Laptop Asus Zenbook";
+            LblNombreObjeto.Text = _objetoDetectadoActual;
+            BtnBuscarGoogle.IsEnabled = true;
+
+            // 3. INDICAMOS LAS COORDENADAS DEL CUADRO SIMULADO
+            // Ponemos una caja de prueba en pantalla: X=120, Y=300, Ancho=250, Alto=180
+            _trackerDrawable.ObjectBounds = new Rect(120, 300, 250, 180);
+            _trackerDrawable.ObjectName = _objetoDetectadoActual;
+
+            // 4. Forzamos al lienzo a actualizarse y pintar el cuadro verde
+            TrackerCanvas.Invalidate();
+        }
+
+        private async void OnBuscarGoogleClicked(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(_objetoDetectadoActual)) return;
+
+            string textoBusqueda = Uri.EscapeDataString(_objetoDetectadoActual);
+            string urlGoogle = $"https://www.google.com/search?q={textoBusqueda}";
+
+            try
+            {
+                // Usamos Launcher.Default para asegurar compatibilidad en versiones nuevas de MAUI
+                await Launcher.Default.OpenAsync(urlGoogle);
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"No se pudo abrir el navegador: {ex.Message}", "OK");
+            }
+        }
+    }
+}

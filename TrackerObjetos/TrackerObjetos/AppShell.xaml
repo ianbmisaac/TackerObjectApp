@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="TrackerObjetos.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:TrackerObjetos"
+    xmlns:views="clr-namespace:TrackerObjetos.Views"
+    Title="TrackerObjetos">
+
+    <ShellContent
+        Title="Inicio"
+        Icon="icon_home.png"
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Route="MainPage" />
+
+    <ShellContent
+        Title="Acerca de"
+        Icon="icon_info.png"
+        ContentTemplate="{DataTemplate views:AboutView}"
+        Route="AboutPage" />
+
+</Shell>

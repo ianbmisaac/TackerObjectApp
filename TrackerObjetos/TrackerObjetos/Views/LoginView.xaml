@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrackerObjetos.Views.LoginView"
+             Shell.NavBarIsVisible="False"
+              BackgroundColor="#030615">
+
+    <Grid VerticalOptions="Center" Padding="30">
+        <VerticalStackLayout Spacing="20" VerticalOptions="Center">
+
+            <Image Source="app_logo.png"
+                   WidthRequest="80"
+                   HeightRequest="80"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,5"/>
+
+            <Label Text="TrackerObjetos"
+                   TextColor="White"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   CharacterSpacing="2"/>
+
+            <Label Text="Iniciar sesión"
+                   TextColor="#88FFFFFF"
+                   FontSize="14"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,10"/>
+
+            <Border BackgroundColor="#0A0D2E"
+                    StrokeShape="RoundRectangle 12"
+                    StrokeThickness="1"
+                    Stroke="#334D4AF2"
+                    Padding="15,5">
+                <Entry x:Name="UsuarioEntry"
+                       Placeholder="Usuario"
+                       PlaceholderColor="#664D4AF2"
+                       TextColor="White"
+                       FontSize="16"
+                       BackgroundColor="Transparent"/>
+            </Border>
+
+            <Border BackgroundColor="#0A0D2E"
+                    StrokeShape="RoundRectangle 12"
+                    StrokeThickness="1"
+                    Stroke="#334D4AF2"
+                    Padding="15,5">
+                <Entry x:Name="PasswordEntry"
+                       Placeholder="Contraseña"
+                       PlaceholderColor="#664D4AF2"
+                       TextColor="White"
+                       FontSize="16"
+                       BackgroundColor="Transparent"
+                       IsPassword="True"/>
+            </Border>
+
+            <Button x:Name="BtnLogin"
+                    Text="Ingresar"
+                    Clicked="OnLoginClicked"
+                    BackgroundColor="#4D4AF2"
+                    TextColor="White"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    CornerRadius="12"
+                    HeightRequest="50"
+                    Margin="0,10,0,0"/>
+
+            <Label x:Name="LblError"
+                   TextColor="#FF4444"
+                   FontSize="13"
+                   HorizontalOptions="Center"
+                   IsVisible="False"/>
+
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>

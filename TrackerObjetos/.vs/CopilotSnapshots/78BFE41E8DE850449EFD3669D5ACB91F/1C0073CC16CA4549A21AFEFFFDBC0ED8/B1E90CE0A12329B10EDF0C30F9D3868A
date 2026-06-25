@@ -1,0 +1,49 @@
+﻿using CommunityToolkit.Maui.Views;
+
+namespace TrackerObjetos
+{
+    public partial class MainPage : ContentPage
+    {
+        // Esta variable guardará el nombre del objeto que la IA detecte
+        private string _objetoDetectadoActual = string.Empty;
+
+        public MainPage()
+        {
+            InitializeComponent();
+
+            // SIMULACIÓN TEMPORAL:
+            // Simulamos que la IA encuentra un objeto a los 3 segundos para probar que la UI funcione
+            SimularDeteccionIA();
+        }
+
+        private async void SimularDeteccionIA()
+        {
+            await Task.Delay(3000);
+
+            // Cuando la IA detecte algo en el futuro, actualizaremos la interfaz así:
+            _objetoDetectadoActual = "Laptop Asus Zenbook";
+            LblNombreObjeto.Text = _objetoDetectadoActual;
+            BtnBuscarGoogle.IsEnabled = true; // Activamos el botón de Google
+        }
+
+        // Este método reemplaza al antiguo 'OnCounterClicked'
+        private async void OnBuscarGoogleClicked(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(_objetoDetectadoActual)) return;
+
+            // Preparamos el texto para que sea seguro en una URL (cambia espacios por %20, etc.)
+            string textoBusqueda = Uri.EscapeDataString(_objetoDetectadoActual);
+            string urlGoogle = $"https://google.com{textoBusqueda}";
+
+            try
+            {
+                // Abre el navegador web nativo del celular con la búsqueda
+                await Launcher.Default.OpenAsync(urlGoogle);
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"No se pudo abrir el navegador: {ex.Message}", "OK");
+            }
+        }
+    }
+}

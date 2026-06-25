@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:camera="clr-namespace:Camera.MAUI;assembly=Camera.MAUI"
+             x:Class="TrackerObjetos.MainPage"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="*">
+
+        <camera:CameraView x:Name="CamaraPreview"
+                            BackgroundColor="Black" />
+
+        <Image x:Name="SnapshotImage"
+               Aspect="AspectFill"
+               IsVisible="False"
+               InputTransparent="True" />
+
+        <Grid RowDefinitions="Auto, *, Auto" Padding="20">
+
+            <Button Grid.Row="0"
+                    Text="Cerrar sesión"
+                    Clicked="OnLogoutClicked"
+                    TextColor="White"
+                    BackgroundColor="#A6000000"
+                    FontSize="11"
+                    CornerRadius="20"
+                    Padding="12,6"
+                    HeightRequest="32"
+                    HorizontalOptions="End"
+                    VerticalOptions="Start" />
+
+            <Border Grid.Row="2"
+                    BackgroundColor="#F20A0D2E" 
+                    StrokeShape="RoundRectangle 25"
+                    StrokeThickness="1"
+                    Stroke="#334D4AF2"
+                    Margin="0,0,0,10"
+                    Padding="20,20,20,20">
+
+                <Border.Shadow>
+                    <Shadow Brush="#000" Offset="0,10" Radius="15" Opacity="0.5"/>
+                </Border.Shadow>
+
+                <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+
+                    <Label x:Name="LblInstruccion" 
+                           Text="Apunte la cámara al objeto y presione Identificar"
+                           TextColor="#88FFFFFF" 
+                           FontSize="13" 
+                           HorizontalOptions="Center"/>
+
+                    <ActivityIndicator x:Name="LoadingIndicator"
+                                       IsRunning="False"
+                                       IsVisible="False"
+                                       Color="#4D4AF2"
+                                       HeightRequest="30" />
+
+                    <Button x:Name="BtnIdentificar"
+                            Text="Identificar objeto"
+                            Clicked="OnIdentificarClicked"
+                            BackgroundColor="#4D4AF2"
+                            TextColor="White"
+                            FontSize="16"
+                            FontAttributes="Bold"
+                            CornerRadius="14"
+                            HeightRequest="48"
+                            Margin="0,4,0,0" />
+
+                </VerticalStackLayout>
+            </Border>
+
+        </Grid>
+
+    </Grid>
+</ContentPage>
